@@ -3,22 +3,29 @@ document.getElementById('copyButton').style.display = 'none';
 function formatData(input) {
     return input.split('\n')
                 .map(line => {
-                    const items = line.split(';');
+                    const items = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // Split by comma, but ignore commas within quotes
                     const formattedItems = [items[0], ...items.slice(1).map(item => {
+                        // Check if item is already wrapped in quotes
+                        
                         if (item.startsWith('"') && item.endsWith('"')) {
-                            return item; // Ignore items already wrapped in double quotes
+                            return item;
+                        } else {
+                            return `"${item}"`;
                         }
-                        return `"${item}"`;
+                       
                     })];
+                    
                     return formattedItems.join(';');
+                   
                 })
+               
                 .join('\n');
+               
 }
 
 document.getElementById('formatButton').addEventListener('click', () => {
     let inputData = document.getElementById('inputData').value;
-    inputData = inputData
-    const outputData = formatData(inputData).replace(/""/g, '');
+    const outputData = formatData(inputData).replace(/""/g,'');
     document.getElementById('outputData').textContent = outputData;
     document.getElementById('copyButton').style.display = 'block';
 });
